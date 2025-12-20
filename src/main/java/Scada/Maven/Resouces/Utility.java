@@ -59,6 +59,12 @@ public class Utility {
 
 	}
 	
+	public static void Win_Print(WebDriver driver ) throws InterruptedException 
+	{
+		((JavascriptExecutor) driver).executeScript("window.print();");
+		Thread.sleep(1500);
+	}
+	
 	
 	
 	public void pressEnter() 
