@@ -34,6 +34,8 @@ public class Base {
 		options.addArguments("--kiosk-printing");
 		options.addArguments("--disable-features=InsecureDownloadWarnings");
 		// options.addArguments("--disable-print-preview");
+		options.addArguments("--force-device-scale-factor=0.75");
+		options.addArguments("--high-dpi-support=0.75");
 
 		// Setup & launch
 		WebDriverManager.chromedriver().setup();

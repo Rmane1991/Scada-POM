@@ -16,17 +16,17 @@ public class Scada_Flex_TestCase extends Base
 	Scada_Flex_Page SC_Flex;
 	Scada_Print_Ch_Batch SC_pcpb;
 
-	//@Test(priority = 1) 
+	@Test(priority = 1) 
 	public void Flex_Batch() throws Exception
 
 	{
 		SC_Flex = new Scada_Flex_Page(driver);
-		login_Flex("meflex","meflex","6931570248");
-		SC_Flex.Flex_Bathc("D:\\ME_Data\\Excel\\Book");
+		login_Flex("meflex","meflex","3158704269");
+		SC_Flex.Flex_Bathc("D:\\ME_Data\\FLex\\Check");
 	}
 
 	
-	@Test(priority = 2) 
+	//@Test(priority = 2) 
 	public void Print_Ch_Batch() throws Exception
 
 	{

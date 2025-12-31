@@ -82,6 +82,15 @@ public class Utility {
 		act.moveToElement(ele).click().build().perform();
 	}
 
+	
+
+	public void moveToElement(WebElement ele)
+
+	{
+		act.moveToElement(ele).build().perform();
+	}
+
+	
 	public void moveToTop()
 	{
 		act.sendKeys(Keys.HOME).perform();
@@ -138,6 +147,25 @@ public class Utility {
 
 	}
 
+	
+	public static boolean isDisplayed(WebElement element, WebDriver wd, long tm) {
+	    boolean isDisplayed = false;
+
+	    try {
+	        WebDriverWait wait = new WebDriverWait(wd, Duration.ofSeconds(tm));
+	        wait.until(ExpectedConditions.visibilityOf(element));
+	        isDisplayed = element.isDisplayed();
+	    } catch (Exception e) {
+	        // ignore - return false
+	    }
+
+	    return isDisplayed;
+	}
+
+	
+	
+	
+	
 	public static boolean isInvisible(By Locator, WebDriver wd, long tm) {
 		boolean isDisplayed = false;
 
