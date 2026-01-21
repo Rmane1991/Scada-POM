@@ -194,6 +194,24 @@ public class Utility {
 
 	}
 	
+	public void Dropdown_Contain_Text(WebElement cat, String visible) {
+
+	    Select dropdown = new Select(cat);
+
+	    for (WebElement option : dropdown.getOptions()) {
+	        if (option.getText().trim().toLowerCase()
+	                .contains(visible.trim().toLowerCase())) 
+	        {
+	            option.click();
+	            return;
+	        }
+	    }
+
+	    throw new RuntimeException(
+	            "❌ Dropdown option containing text '" + visible + "' not found");
+	}
+
+	
 
 	
 	
