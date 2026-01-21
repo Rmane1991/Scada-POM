@@ -5,8 +5,8 @@
     <classes>
       <class name="Scada.Maven.Testcases.Scada_Flex_TestCase">
         <methods>
-          <include name="Initalization"/>
-          <include name="Check_Valid_Credentials"/>
+          <include name="Flex_Batch"/>
+          <include name="tearDown"/>
         </methods>
       </class> <!-- Scada.Maven.Testcases.Scada_Flex_TestCase -->
     </classes>

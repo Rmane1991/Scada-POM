@@ -270,7 +270,8 @@ public class Scada_Flex_Page extends Utility
                     click(openBatch);
                     waitForLoaderToDisappear(driver);
 
-                    Dropdown(ddlCustomer, sheet.getRow(i).getCell(2).getStringCellValue());
+                    Dropdown_Contain_Text(ddlCustomer, sheet.getRow(i).getCell(2).getStringCellValue());
+                   // Dropdown(ddlCustomer, sheet.getRow(i).getCell(2).getStringCellValue());
                     //Dropdown(ddlSite, sheet.getRow(i).getCell(3).getStringCellValue());
                     
                     //For Site not Found
