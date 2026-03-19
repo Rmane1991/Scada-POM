@@ -49,7 +49,8 @@ public class Base {
 
 	}
 
-	public static void login_Flex(String User, String Pass, String refcode) {
+	public static void login_Flex(String User, String Pass, String refcode) 
+	{
 		driver.manage().window().maximize();
 		driver.get("http://www.bmc-scada.online/flex/login.aspx");
 		driver.findElement(By.id("txtLoginId")).sendKeys(User);
@@ -64,7 +65,7 @@ public class Base {
 
 	}
 
-	public static void login_BMC() throws InterruptedException ////String url, String User, String Pass
+	public static void login_BMC() throws InterruptedException //String url, String User, String Pass
 	{ 
 		driver.manage().window().maximize();
 		driver.get("http://www.bmc-scada.online/app/default.aspx");

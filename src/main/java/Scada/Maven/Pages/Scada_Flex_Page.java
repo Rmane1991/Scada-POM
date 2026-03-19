@@ -164,268 +164,273 @@ import Scada.Maven.Resouces.Utility;
 //}
 
 //New Code
-public class Scada_Flex_Page extends Utility 
-{
+public class Scada_Flex_Page extends Utility {
 
-    WebDriver driver;
-    WebDriverWait wait;
+	WebDriver driver;
+	WebDriverWait wait;
 
-    XSSFWorkbook wb = null;
-    XSSFSheet sheet = null;
-    XSSFCell resultCell=null;
+	XSSFWorkbook wb = null;
+	XSSFSheet sheet = null;
+	XSSFCell resultCell = null;
 
-    @FindBy(id = "ctl00_cphBody_txtBatchFrom")
-    WebElement batchFrom;
+	@FindBy(id = "ctl00_cphBody_txtBatchFrom")
+	WebElement batchFrom;
 
-    @FindBy(id = "ctl00_cphBody_txtBatchTo")
-    WebElement batchTo;
+	@FindBy(id = "ctl00_cphBody_txtBatchTo")
+	WebElement batchTo;
 
-    @FindBy(id = "ctl00_cphBody_btnSearch")
-    WebElement btnSearch;
+	@FindBy(id = "ctl00_cphBody_btnSearch")
+	WebElement btnSearch;
 
-    @FindBy(id = "ctl00_cphBody_gvBatchList_ctl02_lnkBatchNo")
-    WebElement openBatch;
+	@FindBy(id = "ctl00_cphBody_gvBatchList_ctl02_lnkBatchNo")
+	WebElement openBatch;
 
-    @FindBy(id = "ctl00_cphBody_txtPrintProductionQty")
-    WebElement txtQty;
+	@FindBy(id = "ctl00_cphBody_txtPrintProductionQty")
+	WebElement txtQty;
 
-    @FindBy(xpath = "//button[contains(text(),'OK')]")
-    WebElement btnOK;
+	@FindBy(xpath = "//button[contains(text(),'OK')]")
+	WebElement btnOK;
 
-    @FindBy(id = "ctl00_cphBody_ddlReceipeCode")
-    WebElement ddlGrade;
+	@FindBy(id = "ctl00_cphBody_ddlReceipeCode")
+	WebElement ddlGrade;
 
-    @FindBy(id = "ctl00_cphBody_btn_submit")
-    WebElement btnSubmit;
+	@FindBy(id = "ctl00_cphBody_btn_submit")
+	WebElement btnSubmit;
 
-    @FindBy(id = "ctl00_cphBody_btn_clear")
-    WebElement btnClear;
+	@FindBy(id = "ctl00_cphBody_btn_clear")
+	WebElement btnClear;
 
-    @FindBy(xpath = "//p[contains(text(),'Batch created successfully.')]")
-    WebElement msgSuccess;
+	@FindBy(xpath = "//p[contains(text(),'Batch created successfully.')]")
+	WebElement msgSuccess;
 
-    @FindBy(id = "ctl00_cphBody_drpCustomer")
-    WebElement ddlCustomer;
+	@FindBy(id = "ctl00_cphBody_drpCustomer")
+	WebElement ddlCustomer;
 
-    @FindBy(id = "ctl00_cphBody_drpsite")
-    WebElement ddlSite;
+	@FindBy(id = "ctl00_cphBody_drpsite")
+	WebElement ddlSite;
 
-    @FindBy(id = "ctl00_cphBody_ddlTruckNo")
-    WebElement ddlVehicle;
-    
-    @FindBy(xpath="//i[@class='md md-details']")
-    WebElement Batch ;
-    
-    @FindBy(xpath = "//tr[@class='gridHeader']")
-    WebElement flexbatchHeader;
+	@FindBy(id = "ctl00_cphBody_ddlTruckNo")
+	WebElement ddlVehicle;
 
-    public Scada_Flex_Page(WebDriver driver) 
-    {
-        this.driver = driver;
-        PageFactory.initElements(driver, this);
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(15));
-        
-    }
+	@FindBy(xpath = "//i[@class='md md-details']")
+	WebElement Batch;
 
-  
+	@FindBy(xpath = "//tr[@class='gridHeader']")
+	WebElement flexbatchHeader;
 
-    public void Flex_Bathc(String excelpath) throws IOException, InterruptedException 
-    {
-    	Actions ac=new Actions(driver);
+	public Scada_Flex_Page(WebDriver driver) {
+		this.driver = driver;
+		PageFactory.initElements(driver, this);
+		this.wait = new WebDriverWait(driver, Duration.ofSeconds(15));
 
-        try (FileInputStream fis = new FileInputStream(excelpath + ".xlsx")) 
-        {
-        	wb = new XSSFWorkbook(fis);
-            sheet = wb.getSheet("Sheet1");
-            
-            int rowCount = sheet.getPhysicalNumberOfRows() - 1;
-            System.out.println("Total Rows Found = " + rowCount);
+	}
 
-            for (int i = 1; i <= rowCount; i++) 
-            {
-            	try 
-                {
-                	resultCell = sheet.getRow(i).createCell(6);
-                    String batchNo = sheet.getRow(i).getCell(0).getRawValue();
+	public void Flex_Bathc(String excelpath) throws IOException, InterruptedException {
+		Actions ac = new Actions(driver);
 
-                    clearAndSet(batchFrom, batchNo);
-                    clearAndSet(batchTo, batchNo);
+		try (FileInputStream fis = new FileInputStream(excelpath + ".xlsx")) {
+			wb = new XSSFWorkbook(fis);
+			sheet = wb.getSheet("Sheet1");
 
-                    click(btnSearch);
-                    Thread.sleep(2000);
-                    
-                    //For Batch Not found
-                    if(isDisplayed(flexbatchHeader,driver,5)==false)
-    				{
-                    	resultCell.setCellValue("Batch Not found");
-    					FileOutputStream outputStream = new FileOutputStream(excelpath + "_01.xlsx");
-    					wb.write(outputStream);
-    					Thread.sleep(1000);
-    					System.out.println(i +":-" + sheet.getRow(i).getCell(0).getRawValue() + ": Batch Not found");
-    					continue;
-    				}
-    				
-                    waitForLoaderToDisappear(driver);
+			int rowCount = sheet.getPhysicalNumberOfRows() - 1;
+			System.out.println("Total Rows Found = " + rowCount);
 
-                    click(openBatch);
-                    waitForLoaderToDisappear(driver);
+			for (int i = 1; i <= rowCount; i++) {
+				try {
+						resultCell = sheet.getRow(i).createCell(6);
+						String batchNo = sheet.getRow(i).getCell(0).getRawValue();
 
-                    Dropdown_Contain_Text(ddlCustomer, sheet.getRow(i).getCell(2).getStringCellValue());
-                   // Dropdown(ddlCustomer, sheet.getRow(i).getCell(2).getStringCellValue());
-                    //Dropdown(ddlSite, sheet.getRow(i).getCell(3).getStringCellValue());
-                    
-                    //For Site not Found
-                    
-                    try 
-                    {
-                        Dropdown(ddlSite, sheet.getRow(i).getCell(3).getStringCellValue());
-                    } 
-                    catch (Exception siteEx) 
-                    {
-//                        if (sheet.getRow(i) == null) 
-//                        {
-//                            sheet.createRow(i);
-//                        }
+						clearAndSet(batchFrom, batchNo);
+						clearAndSet(batchTo, batchNo);
 
-                        resultCell.setCellValue("Site not found");
-                        System.out.println(i + " :- " + batchNo + " : Site not found");
+						click(btnSearch);
+						Thread.sleep(2000);
 
-                        try (FileOutputStream out = new FileOutputStream(excelpath + "_01.xlsx")) 
-                        {
-                            wb.write(out);
-                            out.flush();
-                            ac.moveToElement(Batch).build().perform();
-                            driver.findElement(By.linkText("Batch List")).click();
-                            waitForLoaderToDisappear(driver);
-                        } 
-                        catch (Exception ignored) {}
+					// For Batch Not found
+					if (isDisplayed(flexbatchHeader, driver, 5) == false) 
+					{
+						resultCell.setCellValue("Batch Not found");
+						FileOutputStream outputStream = new FileOutputStream(excelpath + "_01.xlsx");
+						wb.write(outputStream);
+						Thread.sleep(1000);
+						System.out.println(i + ":-" + sheet.getRow(i).getCell(0).getRawValue() + ": Batch Not found");
+						continue;
+					}
 
-                        continue;
-                    }
+					waitForLoaderToDisappear(driver);
 
-                    
-                    
-                   // Dropdown(ddlVehicle, sheet.getRow(i).getCell(6).getStringCellValue());
+					// For Click Batch and Open Batch
 
-                    clearAndClickOK();
-                    txtQty.sendKeys(sheet.getRow(i).getCell(4).getRawValue());
-                    click(btnOK);
-                    waitForLoaderToDisappear(driver);
-                    //new Select(ddlGrade).selectByVisibleText(sheet.getRow(i).getCell(5).getStringCellValue());
+					click(openBatch);
+					waitForLoaderToDisappear(driver);
+					try {
+						// Dropdown_Contain_Text(ddlCustomer,
+						// sheet.getRow(i).getCell(2).getStringCellValue());
+						selectDropdownValue(ddlCustomer, sheet.getRow(i).getCell(2).getStringCellValue());
+						//System.out.println("Customer selection Done");
+					}
 
-                    try 
-                    {
-                    	new Select(ddlGrade).selectByVisibleText(sheet.getRow(i).getCell(5).getStringCellValue());
-                    }
-                    
-                    catch (Exception GradeEx) 
-                    {
+					catch (Exception CustomerEx) 
+					{
+						resultCell.setCellValue("Customer Not Found");
+						System.out.println(i + " :- " + batchNo + " :Customer Not Found");
 
-                        resultCell.setCellValue("Grade not found");
-                        System.out.println(i + " :- " + batchNo + " : Grade not found");
+						try (FileOutputStream out = new FileOutputStream(excelpath + "_01.xlsx")) {
+							wb.write(out);
+							out.flush();
+							ac.moveToElement(Batch).build().perform();
+							driver.findElement(By.linkText("Batch List")).click();
+							waitForLoaderToDisappear(driver);
+						} catch (Exception ignored) {
+						}
 
-                        try (FileOutputStream out = new FileOutputStream(excelpath + "_01.xlsx")) 
-                        {
-                            wb.write(out);
-                            out.flush();
-                            ac.moveToElement(Batch).build().perform();
-                            driver.findElement(By.linkText("Batch List")).click();
-                            waitForLoaderToDisappear(driver);
-                        } 
-                        catch (Exception ignored) {}
+						continue;
+					}
 
-                        continue;
-                    }
-                    
-                    waitForLoaderToDisappear(driver);
+					// Dropdown(ddlCustomer, sheet.getRow(i).getCell(2).getStringCellValue());
+					// Dropdown(ddlSite, sheet.getRow(i).getCell(3).getStringCellValue());
 
-                    By alertOk = By.xpath("//div[@class='sweet-alert showSweetAlert visible']//button[contains(text(),'OK')]");
-                    
-                    if (isDisaplyed(alertOk, driver, 5)) 
-                    {
-                        driver.findElement(alertOk).click();
-                    }
+					// For Site not Found
 
-                    click(btnSubmit);
-                    waitForLoaderToDisappear(driver);
+					try {
+						// Dropdown(ddlSite, sheet.getRow(i).getCell(3).getStringCellValue());
+						selectDropdownValue(ddlSite, sheet.getRow(i).getCell(3).getStringCellValue());
 
-                   // XSSFCell resultCell = sheet.getRow(i).createCell(6);
+					} catch (Exception siteEx) {
 
-                    if (isDisplayed(msgSuccess, driver, 5)) 
-                    {
-                        resultCell.setCellValue("PASS");
-                        System.out.println(i + " :- " + batchNo + ": PASS");
-                    } 
-                    else 
-                    {
-                        resultCell.setCellValue("FAIL");
-                        System.out.println(i + " :- " + batchNo + ": FAIL");
-                    }
+						resultCell.setCellValue("Site not found");
+						System.out.println(i + " :- " + batchNo + " : Site not found");
 
-                    click(btnOK);
-                    click(btnClear);
-                    waitForLoaderToDisappear(driver);
+						try (FileOutputStream out = new FileOutputStream(excelpath + "_01.xlsx")) {
+							wb.write(out);
+							out.flush();
+							ac.moveToElement(Batch).build().perform();
+							driver.findElement(By.linkText("Batch List")).click();
+							waitForLoaderToDisappear(driver);
+						} catch (Exception ignored) {
+						}
 
-                }
-                catch (Exception e) 
-                {
-                    // Handle row-level failure
-                    XSSFCell resultCell = sheet.getRow(i).createCell(6);
-                    resultCell.setCellValue("FAIL");
+						continue;
+					}
 
-                    System.out.println(i + " :- "+ sheet.getRow(i).getCell(0).getRawValue() + " : Exception -> " + e.getMessage());
+					// Dropdown(ddlVehicle, sheet.getRow(i).getCell(6).getStringCellValue());
 
-                    try 
-                    {
-                        	if (driver.findElement(By.xpath("//p[contains(text(),'Batch Not updated')]")).isDisplayed()) 
-                        {
-                            click(driver.findElement(By.xpath("//button[contains(text(),'OK')]")));
-                        }
-                    } 
-                    catch (Exception ignored) 
-                    {
-                        resultCell.setCellValue("Batch Not Found");
-                        System.out.println(i + " :- Batch Not Found");
-                    }
+					clearAndClickOK();
+					txtQty.sendKeys(sheet.getRow(i).getCell(4).getRawValue());
+					click(btnOK);
+					waitForLoaderToDisappear(driver);
+					// new
+					// Select(ddlGrade).selectByVisibleText(sheet.getRow(i).getCell(5).getStringCellValue());
 
-                    // move to Batch list & continue
-                    try 
-                    {
-                       moveToElement(Batch);
-                       driver.findElement(By.linkText("Batch List")).click();
-                    } catch (Exception ignored) {}
+					try {
+						new Select(ddlGrade).selectByVisibleText(sheet.getRow(i).getCell(5).getStringCellValue());
+					}
 
-                    continue;
-                }
-            }
+					catch (Exception GradeEx) {
 
-            // success output
-            try (FileOutputStream out = new FileOutputStream(excelpath + "_01.xlsx")) 
-            {
-                wb.write(out);
-            }
-        }
-    }
+						resultCell.setCellValue("Grade not found");
+						System.out.println(i + " :- " + batchNo + " : Grade not found");
 
+						try (FileOutputStream out = new FileOutputStream(excelpath + "_01.xlsx")) {
+							wb.write(out);
+							out.flush();
+							ac.moveToElement(Batch).build().perform();
+							driver.findElement(By.linkText("Batch List")).click();
+							waitForLoaderToDisappear(driver);
+						} catch (Exception ignored) {
+						}
 
-    // ---------- Helper Methods ----------
+						continue;
+					}
 
-    private void click(WebElement ele) 
-    {
-        wait.until(driver -> ele.isDisplayed() && ele.isEnabled());
-        ele.click();
-    }
+					waitForLoaderToDisappear(driver);
 
-    private void clearAndSet(WebElement ele, String val) 
-    {
-        wait.until(driver -> ele.isDisplayed());
-        ele.clear();
-        ele.sendKeys(val);
-    }
+					By alertOk = By
+							.xpath("//div[@class='sweet-alert showSweetAlert visible']//button[contains(text(),'OK')]");
 
-    private void clearAndClickOK() 
-    {
-        txtQty.clear();
-        click(btnOK);
-    }
+					if (isDisaplyed(alertOk, driver, 5)) {
+						driver.findElement(alertOk).click();
+					}
+
+					click(btnSubmit);
+					waitForLoaderToDisappear(driver);
+
+					// XSSFCell resultCell = sheet.getRow(i).createCell(6);
+
+					if (isDisplayed(msgSuccess, driver, 5)) {
+						resultCell.setCellValue("PASS");
+						System.out.println(i + " :- " + batchNo + ": PASS");
+					} else {
+						resultCell.setCellValue("FAIL");
+						System.out.println(i + " :- " + batchNo + ": FAIL");
+					}
+
+					click(btnOK);
+					click(btnClear);
+					waitForLoaderToDisappear(driver);
+
+				} catch (Exception e) {
+					// Handle row-level failure
+					XSSFCell resultCell = sheet.getRow(i).createCell(6);
+					resultCell.setCellValue("FAIL");
+
+					System.out.println(i + " :- " + sheet.getRow(i).getCell(0).getRawValue() + " : Exception -> "
+							+ e.getMessage());
+
+					try {
+						if (driver.findElement(By.xpath("//p[contains(text(),'Batch Not updated')]")).isDisplayed()) {
+							click(driver.findElement(By.xpath("//button[contains(text(),'OK')]")));
+						}
+					} catch (Exception ignored) {
+						resultCell.setCellValue("Batch Not Found");
+						System.out.println(i + " :- Batch Not Found");
+					}
+
+					// move to Batch list & continue
+					try {
+
+						try {
+							moveToElement(Batch);
+							driver.findElement(By.linkText("Batch List")).click();
+						} catch (Exception e2)
+
+						{
+							driver.navigate().refresh();
+							moveToElement(Batch);
+							driver.findElement(By.linkText("Batch List")).click();
+
+						}
+
+					} catch (Exception ignored) {
+
+					}
+
+					continue;
+				}
+			}
+
+			// success output
+			try (FileOutputStream out = new FileOutputStream(excelpath + "_01.xlsx")) {
+				wb.write(out);
+			}
+		}
+	}
+
+	// ---------- Helper Methods ----------
+
+	private void click(WebElement ele) {
+		wait.until(driver -> ele.isDisplayed() && ele.isEnabled());
+		ele.click();
+	}
+
+	private void clearAndSet(WebElement ele, String val) {
+		wait.until(driver -> ele.isDisplayed());
+		ele.clear();
+		ele.sendKeys(val);
+	}
+
+	private void clearAndClickOK() {
+		txtQty.clear();
+		click(btnOK);
+	}
 }

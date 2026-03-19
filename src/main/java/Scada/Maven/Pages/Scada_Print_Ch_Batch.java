@@ -5,7 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.Duration;
 
-import org.apache.poi.xssf.usermodel.XSSFCell;
+//import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.openqa.selenium.By;
@@ -73,7 +73,7 @@ public class Scada_Print_Ch_Batch extends Utility
 			BatchFrom.sendKeys(batch);
 			BatchTo.sendKeys(batch);
 			Btn_Search.click();
-			Thread.sleep(1000);
+			Thread.sleep(4000);
 		}
 
 	public void Print_CH_Batch(String excelpath) throws IOException, InterruptedException 
@@ -82,7 +82,32 @@ public class Scada_Print_Ch_Batch extends Utility
 		FileInputStream fis = new FileInputStream(excelpath + ".xlsx");
 		XSSFWorkbook wb = new XSSFWorkbook(fis);
 		XSSFSheet sheet = wb.getSheet("Sheet1");
-		XSSFCell cell = null;
+		
+		// ---------- Create Header If Not Exists ----------
+		if (sheet.getRow(0) == null) {
+		    sheet.createRow(0);
+		}
+		
+				sheet.getRow(0).createCell(0).setCellValue("Batch No");
+				sheet.getRow(0).createCell(1).setCellValue("Batch Report");
+				sheet.getRow(0).createCell(2).setCellValue("Challan");
+		
+//		if (sheet.getRow(0).getCell(1) == null) {
+//		    sheet.getRow(0).createCell(1).setCellValue("Batch Report");
+//		}
+//
+//		// Create "Challan" header only if missing
+//		if (sheet.getRow(0).getCell(2) == null) {
+//		    sheet.getRow(0).createCell(2).setCellValue("Challan");
+//		}
+
+		FileOutputStream out = new FileOutputStream(excelpath + ".xlsx");
+		wb.write(out);
+		out.close();
+		
+		
+
+		//XSSFCell cell = null;
 		int rowCount = sheet.getPhysicalNumberOfRows() - 1;
 		
 		pop_RMC.click();
@@ -91,7 +116,12 @@ public class Scada_Print_Ch_Batch extends Utility
 
 		System.out.println("Total Excel Records Found: " + rowCount);
 
-		for (int i = 1; i <= rowCount; i++) {
+		for (int i = 1; i <= rowCount; i++) 
+		{
+			
+			boolean batchReportPrinted = false;
+			boolean challanPrinted = false;
+
 
 			try {
 
@@ -109,11 +139,12 @@ public class Scada_Print_Ch_Batch extends Utility
 
 					driver.navigate().back();
 					Thread.sleep(1500);
-
+					batchReportPrinted = true;
 					System.out.println(i + ": Batch Report Print Done for Batch No: " + batchNo);
 				}
 				catch (Exception e) 
 				{
+					batchReportPrinted = false;
 					System.err.println(i + ": Batch Report Print fail for Batch No: " + batchNo);
 				}
 				
@@ -137,28 +168,50 @@ public class Scada_Print_Ch_Batch extends Utility
 					Thread.sleep(1500);
 					driver.navigate().back();
 					Thread.sleep(1500);
-
+					challanPrinted = true;
 					System.out.println(i + ": Challan Print Done for Batch No: " + batchNo);
 
-					cell = sheet.getRow(i).createCell(3);
-					cell.setCellValue("PASS");
+					//cell = sheet.getRow(i).createCell(3);
+					//cell.setCellValue("PASS");
 
-					FileOutputStream out1 = new FileOutputStream(excelpath + "_01.xlsx");
-					wb.write(out1);
-					out1.close();
-				} else {
+					//FileOutputStream out1 = new FileOutputStream(excelpath + "_01.xlsx");
+					//wb.write(out1);
+					//out1.close();
+				} 
+				else 
+				{
+					challanPrinted = false;
 					System.out.println("Challan Save Failed: " + Ch_Save_Message.getText());
 				}
+				
+				sheet.getRow(i).createCell(1)
+			     .setCellValue(batchReportPrinted ? "YES" : "NO");
+
+			sheet.getRow(i).createCell(2)
+			     .setCellValue(challanPrinted ? "YES" : "NO");
+
+			// Save after each record
+			FileOutputStream out1 = new FileOutputStream(excelpath + "_RESULT.xlsx");
+			wb.write(out1);
+			out1.close();
+
 			}
 
 			catch (Exception e) {
 
-				cell = sheet.getRow(i).createCell(3);
-				cell.setCellValue("FAIL");
+				sheet.getRow(i).createCell(1).setCellValue("NO");
+				sheet.getRow(i).createCell(2).setCellValue("NO");
 
-				FileOutputStream out2 = new FileOutputStream(excelpath + "_02.xlsx");
+				FileOutputStream out2 = new FileOutputStream(excelpath + "_RESULT.xlsx");
 				wb.write(out2);
 				out2.close();
+
+				//cell = sheet.getRow(i).createCell(3);
+				//cell.setCellValue("FAIL");
+
+				//FileOutputStream out2 = new FileOutputStream(excelpath + "_02.xlsx");
+				//wb.write(out2);
+				//out2.close();
 
 				Menu_List.click();
 				Thread.sleep(2000);
