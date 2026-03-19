@@ -5,6 +5,7 @@ import java.time.Duration;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.Keys;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
@@ -95,6 +96,30 @@ public class Utility {
 	{
 		act.sendKeys(Keys.HOME).perform();
 	}
+	
+	
+	
+	public void selectDropdownValue(WebElement dropdown, String value)
+	{
+	    Select select = new Select(dropdown);
+	    String inputText = value.trim().toLowerCase();
+
+	    for (WebElement option : select.getOptions())
+	    {
+	        String optionText = option.getText().trim().toLowerCase();
+
+	        // Exact match OR contains match
+	        if (optionText.equals(inputText) || optionText.contains(inputText))
+	        {
+	            option.click();   // first match selected
+	            return;           // stop checking further options
+	        }
+	    }
+
+	    throw new NoSuchElementException("Value not found in dropdown : " + value);
+	}
+	
+	
 
 //	public void scrollToElement(WebElement element) 
 //	{
